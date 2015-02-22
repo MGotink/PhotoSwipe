@@ -678,6 +678,10 @@ buildtool: false
 			    return false;
 			};
 
+      var onHashChange = function(e) {
+        openPhotoSwipeIfHashPresent();
+      };
+
 			var photoswipeParseHash = function() {
 				var hash = window.location.hash.substring(1),
 			    params = {};
@@ -708,6 +712,14 @@ buildtool: false
 			    params.pid = parseInt(params.pid, 10);
 			    return params;
 			};
+
+      var openPhotoSwipeIfHashPresent = function() {
+        // Parse URL and open gallery if it contains #&pid=3&gid=1
+        var hashData = photoswipeParseHash();
+        if(hashData.pid > 0 && hashData.gid > 0) {
+          openPhotoSwipe( hashData.pid - 1 ,  galleryElements[ hashData.gid - 1 ], true );
+        }
+      };
 
 			var openPhotoSwipe = function(index, galleryElement, disableAnimation) {
 			    var pswpElement = document.querySelectorAll('.pswp')[0],
@@ -829,11 +841,9 @@ buildtool: false
 				galleryElements[i].onclick = onThumbnailsClick;
 			}
 
-			// Parse URL and open gallery if it contains #&pid=3&gid=1
-			var hashData = photoswipeParseHash();
-			if(hashData.pid > 0 && hashData.gid > 0) {
-				openPhotoSwipe( hashData.pid - 1 ,  galleryElements[ hashData.gid - 1 ], true );
-			}
+      window.onhashchange = onHashChange;
+
+			openPhotoSwipeIfHashPresent();
 		};
 
 		initPhotoSwipeFromDOM('.demo-gallery');
